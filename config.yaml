@@ -1,0 +1,13 @@
+repositories:
+  - name: foodslabo
+    owner: foodslabo
+    base: main
+    head: develop
+
+  - name: foodslabo-pf-ag
+    owner: foodslabo
+    base: master
+    head: develop
+
+pr_template:
+  title: "本番リリース({{.Date}})"
