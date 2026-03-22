@@ -3,8 +3,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/manato-takahashi/relech/internal/config"
+	"github.com/manato-takahashi/relech/internal/github"
+
 	// "github.com/manato-takahashi/relech/internal/github" // TODO: 実装時にコメント解除
 	"github.com/spf13/cobra"
 )
@@ -26,22 +29,32 @@ func runPrepare(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	// ============================================================
-	// TODO: ここからがコアロジック（自分で実装するパート）
-	// ============================================================
-	//
-	// 1. cfg.Repositories をループして差分チェック（check と同様）
-	//    - 差分がないリポジトリはスキップ
-	//
-	// 2. 差分があるリポジトリに Draft PR を作成
-	//    - github.CreateDraftPR() を呼ぶ
-	//    - PRタイトル: cfg.PRTemplate.Title のテンプレートに日付を埋める
-	//    - PR本文: 差分PRタイトル一覧を含める
-	//
-	// 3. 作成したPRのリンク一覧を表示
-	//    - "Created N draft PRs" のサマリーも出力
-	//
-	// ============================================================
-
-	_ = cfg // 使ったら消してね
+	needRelease := 0
+	fmt.Println("Creating draft PRs...")
+	fmt.Println()
+	for _, repo := range cfg.Repositories {
+		result, err := github.Compare(repo.Owner, repo.Name, repo.Base, repo.Head)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, " %s: エラー: %v\n", repo.Name, err)
+			continue
+		}
+		if result.AheadBy == 0 {
+			fmt.Printf("%s no changes\n", repo.Name)
+		} else {
+			needRelease++
+			title := fmt.Sprintf("本番リリース(%s)", time.Now().Format("2006-01-02"))
+			body := ""
+			for _, pr := range result.PRs {
+				body += fmt.Sprintf("- #%d\n", pr.Number)
+			}
+			url, err := github.CreateDraftPR(repo.Owner, repo.Name, repo.Base, repo.Head, title, body)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "  %s: PR作成時エラー: %v\n", repo.Name, err)
+				continue
+			}
+			fmt.Printf("%s  %s\n", repo.Name, url)
+		}
+	}
+	fmt.Println()
+	fmt.Printf("Created %d draft PRs\n", needRelease)
 }

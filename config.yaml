@@ -1,23 +1,5 @@
 repositories:
-  - name: foodslabo
-    owner: foodslabo
+  - name: relech-test-repo
+    owner: manato-takahashi
     base: main
     head: develop
-
-  - name: foodslabo-pf-ag
-    owner: foodslabo
-    base: master
-    head: develop
-
-  - name: recruitment_agent_front_admin
-    owner: foodslabo
-    base: master
-    head: develop
-
-  - name: recruitment_agent_front_toB
-    owner: foodslabo
-    base: master
-    head: develop
-
-pr_template:
-  title: "本番リリース({{.Date}})"

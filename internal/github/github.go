@@ -77,28 +77,6 @@ func Compare(owner, repo, base, head string) (*CompareResult, error) {
 	return &CompareResult{AheadBy: result.AheadBy, PRs: prs}, nil
 }
 
-// GetMergedPRs は head → base 方向にマージ済みのPR一覧を取得する
-//
-// TODO: 自分で実装するパート
-//
-// やること:
-//
-//	gh pr list --repo {owner}/{repo} --base {head} --state merged
-//	を os/exec で呼び出し、PR番号とタイトルを取得する
-//
-// 注意:
-//
-//	ここで取得するのは「developにマージされたPR」= feature → develop のPR
-//	base に head(develop) を指定するのがポイント
-//
-// 戻り値:
-//   - []PRInfo: PR一覧
-//   - error: エラー
-func GetMergedPRs(owner, repo, head string) ([]PRInfo, error) {
-	// TODO: 実装する
-	return nil, nil
-}
-
 // CreateDraftPR は Draft PR を作成し、PRのURLを返す
 //
 // TODO: 自分で実装するパート
@@ -113,6 +91,18 @@ func GetMergedPRs(owner, repo, head string) ([]PRInfo, error) {
 //   - string: 作成されたPRのURL
 //   - error: エラー
 func CreateDraftPR(owner, repo, base, head, title, body string) (string, error) {
-	// TODO: 実装する
-	return "", nil
+	formattedRepo := fmt.Sprintf("%s/%s", owner, repo)
+	out, err := exec.Command("gh", "pr", "create",
+		"--repo", formattedRepo,
+		"--base", base,
+		"--head", head,
+		"--title", title,
+		"--body", body,
+		"--assignee", "@me",
+		"--draft",
+	).Output()
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(out)), nil
 }
