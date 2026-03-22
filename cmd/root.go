@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -22,6 +23,14 @@ func Execute() {
 	}
 }
 
+func defaultConfigPath() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "config.yaml"
+	}
+	return filepath.Join(home, ".config", "relech", "config.yaml")
+}
+
 func init() {
-	rootCmd.PersistentFlags().StringVar(&configFile, "config", "config.yaml", "設定ファイルのパス")
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", defaultConfigPath(), "設定ファイルのパス")
 }

@@ -71,11 +71,16 @@ Created 2 draft PRs
 - PRタイトルは `本番リリース(YYYY-MM-DD)` で自動生成
 - PR本文にリリース対象のPR番号リストを自動挿入
 
-## Configuration
+## Setup
 
-`config.yaml` でチェック対象のリポジトリとブランチを設定する。
+設定ファイルを `~/.config/relech/config.yaml` に作成する:
+
+```bash
+mkdir -p ~/.config/relech
+```
 
 ```yaml
+# ~/.config/relech/config.yaml
 repositories:
   - name: frontend-app
     owner: your-org
@@ -91,11 +96,9 @@ pr_template:
   title: "本番リリース({{.Date}})"
 ```
 
-```bash
-# デフォルトは ./config.yaml を読む
-relech check
+デフォルトで `~/.config/relech/config.yaml` を読む。別のファイルを指定する場合:
 
-# 別の設定ファイルを指定
+```bash
 relech check --config /path/to/config.yaml
 ```
 
