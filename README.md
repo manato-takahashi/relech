@@ -148,3 +148,7 @@ Created 2 draft PRs
 | `gh: not found` | `gh` CLIがインストール・認証済みか（`gh auth status` で確認） |
 | `failed to read config` | `~/.config/relech/config.yaml` が存在するか、YAML形式が正しいか |
 | `relech check` が固まったように見える | 初回はGitHub API呼び出しで数秒かかる。リポ数×1-2秒が目安 |
+
+## License
+
+[MIT](LICENSE)
